@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="parcel"
+            type="com.callisto.tasador.domain.Parcel" />
+
+        <variable
+            name="propertyCallback"
+            type="com.callisto.tasador.ui.PropertyListItemClick" />
+
+        <variable
+            name="clickListener"
+            type="com.callisto.tasador.adapters.OnParcelClickListener" />
+    </data>
+
+    <!--    <com.google.android.material.card.MaterialCardView-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        app:cardCornerRadius="0dp"-->
+    <!--        app:cardElevation="5dp"-->
+    <!--        android:layout_marginTop="8dp"-->
+    <!--        android:layout_marginBottom="16dp">-->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(parcel)}">
+
+<!--        <androidx.constraintlayout.widget.Guideline-->
+<!--            android:id="@+id/left_well"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            app:layout_constraintGuide_begin="8dp" />-->
+
+<!--        <androidx.constraintlayout.widget.Guideline-->
+<!--            android:id="@+id/right_well"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginEnd="8dp"-->
+<!--            android:orientation="vertical"-->
+<!--            app:layout_constraintGuide_end="8dp" />-->
+
+        <TextView
+            android:id="@+id/parcelD1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:dimensionOne="@{parcel}"
+            tools:text="IV" />
+        <!--            android:text="@{parcel.d1.toString()}"-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--    </com.google.android.material.card.MaterialCardView>-->
+
+</layout>

@@ -1,0 +1,221 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "14b8c872295cca8927edcb8cdcd118ea",
+    "entities": [
+      {
+        "tableName": "parcels",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`parcel_id` INTEGER PRIMARY KEY AUTOINCREMENT, `front` REAL, `side` REAL, `area` REAL, `district` TEXT, `section` TEXT, `block` TEXT, `plot` TEXT, `id_house` INTEGER, `parcel_address` TEXT, `parcel_owner` TEXT, `parcel_price_final` INTEGER, `parcel_price_quoted` INTEGER, FOREIGN KEY(`id_house`) REFERENCES `houses`(`house_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "parcel_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "front",
+            "columnName": "front",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "side",
+            "columnName": "side",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "area",
+            "columnName": "area",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "district",
+            "columnName": "district",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "section",
+            "columnName": "section",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "block",
+            "columnName": "block",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "plot",
+            "columnName": "plot",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "id_house",
+            "columnName": "id_house",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "property.address",
+            "columnName": "parcel_address",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "property.owner",
+            "columnName": "parcel_owner",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "property.priceFinal",
+            "columnName": "parcel_price_final",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "property.priceQuoted",
+            "columnName": "parcel_price_quoted",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "parcel_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_parcels_parcel_id",
+            "unique": true,
+            "columnNames": [
+              "parcel_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_parcels_parcel_id` ON `${TABLE_NAME}` (`parcel_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "houses",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "id_house"
+            ],
+            "referencedColumns": [
+              "house_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "houses",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`house_id` INTEGER PRIMARY KEY AUTOINCREMENT, `house_address` TEXT, `house_owner` TEXT, `house_price_final` INTEGER, `house_price_quoted` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "house_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "property.address",
+            "columnName": "house_address",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "property.owner",
+            "columnName": "house_owner",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "property.priceFinal",
+            "columnName": "house_price_final",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "property.priceQuoted",
+            "columnName": "house_price_quoted",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "house_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_houses_house_id",
+            "unique": true,
+            "columnNames": [
+              "house_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_houses_house_id` ON `${TABLE_NAME}` (`house_id`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "chambers",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chamber_id` INTEGER PRIMARY KEY AUTOINCREMENT, `front` REAL, `side` REAL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "chamber_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "front",
+            "columnName": "front",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "side",
+            "columnName": "side",
+            "affinity": "REAL",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "chamber_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_chambers_chamber_id",
+            "unique": true,
+            "columnNames": [
+              "chamber_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_chambers_chamber_id` ON `${TABLE_NAME}` (`chamber_id`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '14b8c872295cca8927edcb8cdcd118ea')"
+    ]
+  }
+}

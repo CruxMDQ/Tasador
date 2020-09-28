@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/propertyList">
+
+    <fragment
+        android:id="@+id/propertyList"
+        android:name="com.callisto.tasador.ui.PropertyListFragment"
+        android:label="fragment_property_list"
+        tools:layout="@layout/fragment_property_list">
+        <argument
+            android:name="propertyId"
+            android:defaultValue="-1L"
+            app:argType="long"
+            />
+        <action
+            android:id="@+id/action_propertyList_to_parcelCreationFragment"
+            app:destination="@id/parcelCreationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/parcelCreationFragment"
+        android:name="com.callisto.tasador.ui.ParcelEditionFragment"
+        android:label="ParcelCreationFragment" >
+        <argument
+            android:name="propertyId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
+
+</navigation>
