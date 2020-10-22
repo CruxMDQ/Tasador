@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 1,
-    "identityHash": "0eee9d6b4e770ed4490624b96419abc4",
+    "version": 3,
+    "identityHash": "67f58538dd67a31c253782be523f6ae4",
     "entities": [
       {
         "tableName": "parcels",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`parcel_id` INTEGER PRIMARY KEY AUTOINCREMENT, `front` REAL, `side` REAL, `area` REAL, `district` TEXT, `section` TEXT, `block` TEXT, `plot` TEXT, `id_house` INTEGER, `parceladdress` TEXT, `parcelowner` TEXT, `parcelprice_final` INTEGER, `parcelprice_quoted` INTEGER, FOREIGN KEY(`id_house`) REFERENCES `houses`(`house_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`parcel_id` INTEGER PRIMARY KEY AUTOINCREMENT, `front` REAL, `side` REAL, `area` REAL, `district` TEXT, `section` TEXT, `block` TEXT, `plot` TEXT, `id_house` INTEGER, `parceltype` TEXT, `parceladdress` TEXT, `parcelowner` TEXT, `parcelprice_final` INTEGER, `parcelprice_quoted` INTEGER, FOREIGN KEY(`id_house`) REFERENCES `houses`(`house_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -60,6 +60,12 @@
             "fieldPath": "id_house",
             "columnName": "id_house",
             "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "property.type",
+            "columnName": "parceltype",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
@@ -119,12 +125,18 @@
       },
       {
         "tableName": "houses",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`house_id` INTEGER PRIMARY KEY AUTOINCREMENT, `houseaddress` TEXT, `houseowner` TEXT, `houseprice_final` INTEGER, `houseprice_quoted` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`house_id` INTEGER PRIMARY KEY AUTOINCREMENT, `housetype` TEXT, `houseaddress` TEXT, `houseowner` TEXT, `houseprice_final` INTEGER, `houseprice_quoted` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "house_id",
             "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "property.type",
+            "columnName": "housetype",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
@@ -245,7 +257,7 @@
       },
       {
         "tableName": "RealEstate",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`re_id` INTEGER PRIMARY KEY AUTOINCREMENT, `parent_id` INTEGER, `front` REAL, `side` REAL, `area` REAL, `cataster` TEXT, `zonification` TEXT, `readdress` TEXT, `reowner` TEXT, `reprice_final` INTEGER, `reprice_quoted` INTEGER, FOREIGN KEY(`parent_id`) REFERENCES `RealEstate`(`re_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`re_id` INTEGER PRIMARY KEY AUTOINCREMENT, `parent_id` INTEGER, `front` REAL, `side` REAL, `area` REAL, `cataster` TEXT, `zonification` TEXT, `retype` TEXT, `readdress` TEXT, `reowner` TEXT, `reprice_final` INTEGER, `reprice_quoted` INTEGER, FOREIGN KEY(`parent_id`) REFERENCES `RealEstate`(`re_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -286,6 +298,12 @@
           {
             "fieldPath": "zonification",
             "columnName": "zonification",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "property.type",
+            "columnName": "retype",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -348,7 +366,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0eee9d6b4e770ed4490624b96419abc4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '67f58538dd67a31c253782be523f6ae4')"
     ]
   }
 }

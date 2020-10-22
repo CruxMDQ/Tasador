@@ -7,7 +7,7 @@
 
         <variable
             name="parcel"
-            type="com.callisto.tasador.domain.Parcel" />
+            type="com.callisto.tasador.domain.RealEstate" />
 
         <variable
             name="propertyCallback"
@@ -15,7 +15,7 @@
 
         <variable
             name="clickListener"
-            type="com.callisto.tasador.adapters.OnParcelClickListener" />
+            type="com.callisto.tasador.adapters.OnRealEstateClickListener" />
     </data>
 
     <!--    <com.google.android.material.card.MaterialCardView-->
@@ -55,7 +55,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:dimensionOne="@{parcel}"
+            app:parcelFront="@{parcel}"
             tools:text="IV" />
         <!--            android:text="@{parcel.d1.toString()}"-->
 

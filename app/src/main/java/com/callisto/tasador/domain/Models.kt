@@ -14,8 +14,9 @@ package com.callisto.tasador.domain
  * 9/23/20: Resorted to using an interface instead of an abstract class to avoid issues when
  * building constructors.
  */
-interface Property {
+interface BaseProperty {
     var id: Int
+    var type: String
     var address: String
     var owner: String
     var priceFinal: Long
@@ -24,34 +25,38 @@ interface Property {
 
 data class Chamber(
     var id: Int?,
+    var parent_id: Int?,
     var front: Float?,
-    var side: Float?
+    var side: Float?,
+    var area: Float?
 )
 
-data class House (
+data class RealEstate(
     override var id: Int = -1,
+    override var type: String = "",
     override var address: String = "",
     override var owner: String = "",
     override var priceFinal: Long = 0,
     override var priceQuoted: Long = 0,
-    var chambers: List<Chamber> = ArrayList(),
-    var parcels: List<Parcel> = ArrayList()
-) : Property
-
-data class Parcel(
-    override var id: Int = -1,
-    override var address: String = "",
-    override var owner: String = "",
-    override var priceFinal: Long = 0,
-    override var priceQuoted: Long = 0,
+    var parent_id: Int?,
     var front: Float?,
     var side: Float?,
     var area: Float?,
-    var district: String?,
-    var section: String?,
-    var block: String?,
-    var plot: String?
-) : Property
+    var cataster: String?,
+    var zonification: String?,
+    var subunits: List<RealEstate>? = null,
+    var chambers: List<Chamber>? = null
+) : BaseProperty
+{
+    fun hasParent() : Boolean
+    {
+        if (parent_id == null)
+        {
+            return false
+        }
+        return true
+    }
+}
 
 /**
  * Sample project has a shortDescription method.

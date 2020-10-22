@@ -3,35 +3,43 @@ package com.callisto.tasador.database
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.callisto.tasador.domain.Parcel
 
-private const val VERSION = 1
+private const val VERSION = 4
 
 @Dao
 interface RealtorDao {
-    @Query("SELECT * FROM $TABLE_PARCELS WHERE $COL_PARCEL_ID = :key")
-    fun getParcelWithId(key: Int): LiveData<DatabaseParcel>
+//    @Query("SELECT * FROM $TABLE_PARCELS WHERE $COL_PARCEL_ID = :key")
+//    fun getParcelWithId(key: Int): LiveData<DatabasePlot>
+//
+//    @Query("SELECT * FROM $TABLE_PARCELS")
+//    fun getParcels(): LiveData<List<DatabasePlot>>
+//
+//    @Query("SELECT COUNT(*) FROM $TABLE_PARCELS")
+//    fun getLastParcelId(): Int
+//
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    fun insertAll(databasePlots: List<DatabasePlot>)
+//
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    fun insertParcel(plot: DatabasePlot): Long
 
-    @Query("SELECT * FROM $TABLE_PARCELS")
-    fun getParcels(): LiveData<List<DatabaseParcel>>
+    @Query("SELECT * FROM $TABLE_RE")
+    @Transaction
+    fun getRealEstateWithChildren(): LiveData<List<RealEstateWithSubunits>>
 
-    @Query("SELECT COUNT(*) FROM $TABLE_PARCELS")
-    fun getLastParcelId(): Int
+    @Query("SELECT COUNT(*) FROM $TABLE_RE")
+    fun getLastRealEstateId(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(databaseParcels: List<DatabaseParcel>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertParcel(parcel: DatabaseParcel): Long
+    fun insertRealEstate(obj: DatabaseRealEstate)
 }
 
 @Database
 (
     entities =
     [
-        DatabaseParcel::class,
-        DatabaseHouse::class,
-        DatabaseChamber::class
+        DatabaseChamber::class,
+        DatabaseRealEstate::class
     ],
     version = VERSION
 )

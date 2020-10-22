@@ -3,64 +3,64 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-<!--        <variable-->
-<!--            name="activeParcel"-->
-<!--            type="com.callisto.tasador.domain.Parcel" />-->
+        <variable
+            name="activeParcel"
+            type="com.callisto.tasador.domain.RealEstate" />
 
         <variable
             name="viewModel"
-            type="com.callisto.tasador.viewmodels.ParcelEditionViewModel" />
+            type="com.callisto.tasador.viewmodels.PlotEditionViewModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/txtD1"
+            android:id="@+id/txtFront"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dimension 1"
+            android:text="Front"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/editD1"
-            app:layout_constraintBottom_toTopOf="@id/txtD2" />
+            app:layout_constraintEnd_toStartOf="@id/editFront"
+            app:layout_constraintBottom_toTopOf="@id/txtSide" />
 
         <EditText
-            android:id="@+id/editD1"
+            android:id="@+id/editFront"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{viewModel.activeParcel.front.toString(), default=0}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/txtD1"/>
+            app:layout_constraintStart_toEndOf="@id/txtFront"/>
 
         <TextView
-            android:id="@+id/txtD2"
+            android:id="@+id/txtSide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dimension 2"
-            app:layout_constraintBottom_toBottomOf="@+id/editD2"
-            app:layout_constraintEnd_toStartOf="@id/editD2"
+            android:text="Side"
+            app:layout_constraintBottom_toBottomOf="@+id/editSide"
+            app:layout_constraintEnd_toStartOf="@id/editSide"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtD1" />
+            app:layout_constraintTop_toBottomOf="@id/txtFront" />
 
         <EditText
-            android:id="@+id/editD2"
+            android:id="@+id/editSide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{viewModel.activeParcel.side.toString(), default=0}"
-            app:layout_constraintTop_toBottomOf="@id/editD1"
+            app:layout_constraintTop_toBottomOf="@id/editFront"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/txtD2"
+            app:layout_constraintStart_toEndOf="@id/txtSide"
             />
 
         <Button
             android:id="@+id/btnAdd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="@{() -> viewModel.launchAddParcel(editD1.getText().toString(), editD2.getText().toString())}"
+            android:onClick="@{() -> viewModel.launchAddParcel(editFront.getText().toString(), editSide.getText().toString())}"
             android:text="Add"
-            app:layout_constraintTop_toBottomOf="@id/txtD2"
+            app:layout_constraintTop_toBottomOf="@id/txtSide"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

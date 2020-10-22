@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.callisto.tasador.viewmodels.HouseEditionViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/txtAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/editAddress"
+            app:layout_constraintBottom_toTopOf="@id/txtOwner" />
+
+        <EditText
+            android:id="@+id/editAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPostalAddress"
+            android:text="@{viewModel.activeEstate.address}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/txtAddress"/>
+
+        <TextView
+            android:id="@+id/txtOwner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Owner"
+            app:layout_constraintBottom_toBottomOf="@+id/editOwner"
+            app:layout_constraintEnd_toStartOf="@id/editOwner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtAddress" />
+
+        <EditText
+            android:id="@+id/editOwner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="@{viewModel.activeEstate.owner}"
+            app:layout_constraintTop_toBottomOf="@id/editAddress"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/txtOwner"
+            />
+
+        <TextView
+            android:id="@+id/txtPriceQuoted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quoted price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtOwner"
+            app:layout_constraintBottom_toBottomOf="@id/editPriceQuoted"
+            app:layout_constraintEnd_toStartOf="@id/editPriceQuoted"
+            />
+
+        <EditText
+            android:id="@+id/editPriceQuoted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="@{String.valueOf(viewModel.activeEstate.priceQuoted), default=0}"
+            app:layout_constraintTop_toBottomOf="@id/editOwner"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/txtPriceQuoted"
+            />
+
+        <TextView
+            android:id="@+id/txtPriceFinal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Final price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtPriceQuoted"
+            app:layout_constraintBottom_toBottomOf="@id/editPriceFinal"
+            app:layout_constraintEnd_toStartOf="@id/editPriceFinal"
+            />
+
+        <EditText
+            android:id="@+id/editPriceFinal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="@{String.valueOf(viewModel.activeEstate.priceFinal), default=0}"
+            app:layout_constraintTop_toBottomOf="@id/editPriceQuoted"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/txtPriceFinal"
+            />
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/coordinatorPlots"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editPriceFinal"
+            app:layout_constraintBottom_toTopOf="@id/btnAdd"
+            >
+            <!--Had a problem here where the compiler bitched about duplicate attributes-->
+            <!--Solution was to remove width and height attributes from root element-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvParcels"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/spacing_normal"
+                android:onClick="@{() -> viewModel.onFabClicked(editAddress.getText().toString(), editOwner.getText().toString(), Long.valueOf(editPriceQuoted.getText().toString()), Long.valueOf(editPriceFinal.getText().toString()))}"
+                android:background="@color/colorPrimary"/>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> viewModel.launchAddEstate(editAddress.getText().toString(), editOwner.getText().toString(), Long.valueOf(editPriceQuoted.getText().toString()), Long.valueOf(editPriceFinal.getText().toString()))}"
+            android:text="Add"
+            app:layout_constraintTop_toBottomOf="@id/coordinatorPlots"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

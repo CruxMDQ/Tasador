@@ -1,24 +1,20 @@
 package com.callisto.tasador.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.callisto.tasador.R
-import com.callisto.tasador.adapters.OnParcelClickListener
-import com.callisto.tasador.adapters.ParcelAdapter
+import com.callisto.tasador.adapters.OnRealEstateClickListener
+import com.callisto.tasador.adapters.RealEstateAdapter
 import com.callisto.tasador.databinding.FragmentPropertyListBinding
-import com.callisto.tasador.databinding.ItemParcelBinding
-import com.callisto.tasador.domain.Parcel
-import com.callisto.tasador.domain.Property
+import com.callisto.tasador.domain.BaseProperty
+import com.callisto.tasador.domain.RealEstate
 import com.callisto.tasador.viewmodels.PropertyListViewModel
 
 class PropertyListFragment : Fragment()
@@ -33,15 +29,13 @@ class PropertyListFragment : Fragment()
             "You can only access the ViewModel after onActivityCreated"
         }
 
-//        ViewModelProvider(this).get(PropertyListViewModel::class.java)
         PropertyListViewModel.Factory(activity.application).create(
         //
             PropertyListViewModel::class.java
         )
     }
 
-    /**
-     * Instantiates user interface view.
+    /** Instantiates user interface view.
      *
      * @param inflater The LayoutInflater object that can be used to inflate
      * any views in the fragment,
@@ -66,8 +60,7 @@ class PropertyListFragment : Fragment()
             false
         )
 
-        /**
-         * Sets lifecycle owner so DataBinding can observe LiveData.
+        /** Sets lifecycle owner so DataBinding can observe LiveData.
          *
          * - The method just would not show up, so went on and assigned the lifecycle owner by hand
          * - Eventually the method DID show up, after trying to run it and getting an
@@ -75,35 +68,52 @@ class PropertyListFragment : Fragment()
          * - ISE kept appearing, had to replace vanilla return of parent class method with a line to
          * return binding.root (d'oh) -__-
          */
-        binding.setLifecycleOwner(viewLifecycleOwner)
+        binding.lifecycleOwner = viewLifecycleOwner
 
         binding.viewModel = viewModel
 
-        val adapter = ParcelAdapter(OnParcelClickListener {
-            parcelId -> viewModel.onItemClicked(parcelId)
+        val estateAdapter = RealEstateAdapter(OnRealEstateClickListener {
+            realEstateId -> viewModel.onItemClicked(realEstateId)
         })
 
+        setUpEstateRecyclerViewAdapter(binding, estateAdapter)
+
+        setUpRepositoryObserver(estateAdapter)
+
+        setUpNavigation()
+
+        viewModel.isSelectingType.observe(viewLifecycleOwner, {
+            if (it)
+            {
+                // TODO Code picker in alert dialog
+
+                viewModel.setIsSelectingType(false)
+            }
+        })
+
+        return binding.root
+    }
+
+    private fun setUpEstateRecyclerViewAdapter(
+        binding: FragmentPropertyListBinding,
+        estateAdapter: RealEstateAdapter
+    ) {
         val layoutManager = LinearLayoutManager(context)
 
         layoutManager.orientation = RecyclerView.VERTICAL
 
         binding.rvProperties.layoutManager = layoutManager
 
-        binding.rvProperties.adapter = adapter
+        binding.rvProperties.adapter = estateAdapter
+    }
 
-        viewModel.repository.parcels.observe(viewLifecycleOwner, {
-            it?.let {
-                adapter.submitList(it)
-            }
-        })
-
+    private fun setUpNavigation() {
         viewModel.navigateToNewProperty.observe(viewLifecycleOwner, {
             it?.let {
                 val navController = this.findNavController()
 
-                if (navController.currentDestination?.id == R.id.propertyList)
-                {
-                    navController.navigate(PropertyListFragmentDirections.actionPropertyListToParcelCreationFragment())
+                if (navController.currentDestination?.id == R.id.propertyList) {
+                    navController.navigate(PropertyListFragmentDirections.actionPropertyListToHouseEditionFragment())
                 }
 
                 viewModel.onNavigatedToNewProperty()
@@ -114,107 +124,40 @@ class PropertyListFragment : Fragment()
             it.let {
                 val navController = this.findNavController()
 
-                if (navController.currentDestination?.id == R.id.propertyList)
-                {
-                    navController.navigate(PropertyListFragmentDirections.actionPropertyListToParcelCreationFragment(it))
+                if (navController.currentDestination?.id == R.id.propertyList) {
+                    navController.navigate(
+                        PropertyListFragmentDirections.actionPropertyListToHouseEditionFragment(
+                            it
+                        )
+                    )
                 }
             }
         })
-
-        return binding.root
     }
+
+    private fun setUpRepositoryObserver(estateAdapter: RealEstateAdapter)
+    {
+        viewModel.repository.properties.observe(viewLifecycleOwner, {
+            it?.let {
+                estateAdapter.submitList(filterSourceData(it))
+            }
+        })
+    }
+
+    /**
+     * Filters source data. Resulting list must only contain real estate objects with no parent.
+     */
+    private fun filterSourceData(it: List<RealEstate>) =
+        it.filter { realEstate -> !realEstate.hasParent() }
 }
 
-/**
- * Click listener for Properties. Naming the block helps understanding what it actually does.
+/** Click listener for Properties. Naming the block helps understanding what it actually does.
  */
-class PropertyListItemClick(val block: (Property) -> Unit)
+class PropertyListItemClick(val block: (BaseProperty) -> Unit)
 {
-    /**
-     * Called when a property is clicked
+    /** Called when a property is clicked
      *
      * @param property the property that was clicked
      */
-    fun onClick(property: Property) = block(property)
-}
-
-/**
- * Adapter for RecyclerViews supporting multiple view types.
- * Sources:
- * https://stackoverflow.com/a/56826922/742145
- * https://blog.mindorks.com/recyclerview-multiple-view-types-in-android
- *
- * 9/17/20: those solutions require using inner classes on the Adapter class for
- * ViewHolders, an approach so far NOT used here.
- */
-class PropertyListAdapter(
-    val callback: PropertyListItemClick,
-    private val context: Context,
-    list: List<Property>)
-    : RecyclerView.Adapter<RecyclerView.ViewHolder>()
-{
-    companion object
-    {
-        const val VIEW_TYPE_PARCEL = 1
-        const val VIEW_TYPE_HOUSE = 2
-    }
-
-    private val data: List<Property> = list
-
-    override fun getItemCount(): Int {
-        return data.size
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        val item = data[position]
-
-        return when (item)
-        {
-            is Parcel -> VIEW_TYPE_PARCEL
-            else -> VIEW_TYPE_HOUSE
-        }
-//        /**
-//         * Had to go and check out how to do instanceOf here.
-//         * Source: https://stackoverflow.com/a/44098842/742145
-//         */
-//        if (item is Parcel)
-//        {
-//            return VIEW_TYPE_PARCEL
-//        }
-//        return VIEW_TYPE_HOUSE
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        /**
-         * Uncomment this, expand and introduce more cases as new property types are added.
-         */
-//        if (viewType == VIEW_TYPE_PARCEL)
-//        {
-            val withDataBinding: ItemParcelBinding = DataBindingUtil.inflate(
-                LayoutInflater.from(context),
-                ParcelViewHolder.LAYOUT,
-                parent,
-                false
-            )
-            return ParcelViewHolder(withDataBinding)
-//        }
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int)
-    {
-//        (holder as ParcelViewHolder).bind(position)
-    }
-}
-
-/**
- * ViewHolder for Parcel items. All work done by data binding.
- */
-class ParcelViewHolder(viewDataBinding: ItemParcelBinding)
-    : RecyclerView.ViewHolder(viewDataBinding.root)
-{
-    companion object
-    {
-        @LayoutRes
-        val LAYOUT = R.layout.item_parcel
-    }
+    fun onClick(property: BaseProperty) = block(property)
 }

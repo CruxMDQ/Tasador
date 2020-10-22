@@ -28,6 +28,7 @@ class PropertyListViewModel : BaseViewModel
 
     fun onFabClicked()
     {
+        setIsSelectingType(true)
         _navigateToNewProperty.value = true
     }
 
@@ -48,6 +49,20 @@ class PropertyListViewModel : BaseViewModel
         _navigateToPropertyDetails.value = null
     }
 
+    fun onItemClicked(id: Int)
+    {
+        _navigateToPropertyDetails.value = id
+    }
+
+    private var _isSelectingType = MutableLiveData<Boolean>()
+    val isSelectingType: LiveData<Boolean>
+        get() = _isSelectingType
+
+    fun setIsSelectingType(isSelecting: Boolean)
+    {
+        _isSelectingType.value = isSelecting
+    }
+
     /**
      * Factory for constructing [PropertyListViewModel] with parameter
      */
@@ -62,10 +77,5 @@ class PropertyListViewModel : BaseViewModel
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }
-    }
-    
-    fun onItemClicked(id: Int)
-    {
-        _navigateToPropertyDetails.value = id
     }
 }

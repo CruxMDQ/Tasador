@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="house"
+            type="com.callisto.tasador.domain.RealEstate" />
+
+        <variable
+            name="propertyCallback"
+            type="com.callisto.tasador.ui.PropertyListItemClick" />
+
+        <variable
+            name="clickListener"
+            type="com.callisto.tasador.adapters.OnRealEstateClickListener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(house)}">
+
+        <TextView
+            android:id="@+id/lblEstateId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ID#"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/txtEstateId"/>
+
+        <TextView
+            android:id="@+id/txtEstateId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/lblEstateId"
+            app:estateId="@{house}"
+            tools:text="3"
+            />
+
+        <TextView
+            android:id="@+id/lblEstateAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lblEstateId"
+            app:layout_constraintEnd_toStartOf="@id/txtEstateAddress"/>
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+
+        <TextView
+            android:id="@+id/txtEstateAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtEstateId"
+            app:layout_constraintStart_toEndOf="@id/lblEstateAddress"
+            app:estateAddress="@{house}"
+            tools:text="Some blah blah address"/>
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+
+        <TextView
+            android:id="@+id/lblEstateFinalPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Final price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lblEstateAddress"
+            app:layout_constraintEnd_toStartOf="@id/txtEstateFinalPrice"/>
+
+        <TextView
+            android:id="@+id/txtEstateFinalPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtEstateAddress"
+            app:layout_constraintStart_toEndOf="@id/lblEstateFinalPrice"
+            app:estateFinalPrice="@{house}"
+            tools:text="A truckzillion cents"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

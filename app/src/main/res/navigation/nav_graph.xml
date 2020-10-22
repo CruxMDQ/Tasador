@@ -17,16 +17,37 @@
             />
         <action
             android:id="@+id/action_propertyList_to_parcelCreationFragment"
-            app:destination="@id/parcelCreationFragment" />
+            app:destination="@id/plotEditionFragment" />
+        <action
+            android:id="@+id/action_propertyList_to_houseEditionFragment"
+            app:destination="@id/houseEditionFragment" />
     </fragment>
     <fragment
-        android:id="@+id/parcelCreationFragment"
-        android:name="com.callisto.tasador.ui.ParcelEditionFragment"
+        android:id="@+id/plotEditionFragment"
+        android:name="com.callisto.tasador.ui.PlotEditionFragment"
         android:label="ParcelCreationFragment" >
         <argument
             android:name="propertyId"
             app:argType="integer"
             android:defaultValue="-1" />
+        <argument
+            android:name="parentId"
+            android:defaultValue="-1"
+            app:argType="integer"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/houseEditionFragment"
+        android:name="com.callisto.tasador.ui.HouseEditionFragment"
+        android:label="HouseEditionFragment" >
+        <argument
+            android:name="propertyId"
+            android:defaultValue="-1"
+            app:argType="integer"
+            />
+        <action
+            android:id="@+id/action_houseEditionFragment_to_parcelCreationFragment"
+            app:destination="@id/plotEditionFragment" />
     </fragment>
 
 </navigation>

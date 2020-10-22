@@ -1,23 +1,26 @@
 package com.callisto.tasador.database
 
 import androidx.room.*
-import com.callisto.tasador.domain.Parcel
+import com.callisto.tasador.domain.Chamber
+import com.callisto.tasador.domain.Plot
+import com.callisto.tasador.domain.RealEstate
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-//const val TABLE_PROPERTIES = "properties"
-const val TABLE_PARCELS = "parcels"
-const val TABLE_HOUSES = "houses"
+const val TABLE_RE = "RealEstate"
 const val TABLE_CHAMBERS = "chambers"
 
-const val PREFIX_PARCEL = "parcel_"
-const val PREFIX_HOUSE = "house_"
+const val PARCEL = "parcel"
+const val HOUSE = "house"
+const val RE = "re"
 
-const val COL_ID = "id"
-const val COL_PARCEL_ID = PREFIX_PARCEL + COL_ID
-const val COL_HOUSE_ID = PREFIX_HOUSE + COL_ID
+const val SUFFIX_ID = "id"
 const val COL_CHAMBER_ID = "chamber_id"
 
+const val COL_RE_ID = RE + "_" + SUFFIX_ID
+const val COL_PARENT_ID = "parent_id"
+
+const val COL_TYPE = "type"
 const val COL_ADDRESS = "address"
 const val COL_OWNER = "owner"
 const val COL_PRICE_FINAL = "price_final"
@@ -29,17 +32,20 @@ const val COL_PARCEL_FRONT = "front"
 const val COL_PARCEL_SIDE = "side"
 const val COL_AREA = "area"
 
-const val COL_DISTRICT = "district"
-const val COL_SECTION = "section"
-const val COL_BLOCK = "block"
-const val COL_PLOT = "plot"
+const val COL_CATASTER = "cataster"
+const val COL_ZONIFICATION = "zonification"
 
-const val FK_COL_ID_HOUSE = "id_house"
 /**
  * Master entity class. All property types must extend this.
  * 9/23/20: OR EMBED IT! DAMN IT!
  */
-open class DatabaseProperty {
+open class DatabaseProperty
+{
+    @ColumnInfo(name = COL_TYPE)
+    @SerializedName(COL_TYPE)
+    @Expose
+    var type: String? = null
+
     @ColumnInfo(name = COL_ADDRESS)
     @SerializedName(COL_ADDRESS)
     @Expose
@@ -68,177 +74,17 @@ open class DatabaseProperty {
     @Ignore
     constructor
     (
-        street: String,
+        type: String,
+        address: String,
         owner: String,
         priceFinal: Long,
         priceQuoted: Long
     ) : super() {
-        this.address = street
+        this.type = type
+        this.address = address
         this.owner = owner
         this.priceFinal = priceFinal
         this.priceQuoted = priceQuoted
-    }
-}
-
-/**
- * Class representing a plot of land.
- *
- * Houses and buildings may have multiple plots.
- *
- * No action on delete: parcels persist whether there is a house on them or not.
- */
-@Entity
-    (
-    tableName = TABLE_PARCELS,
-    indices =
-    [
-        Index(value = [COL_PARCEL_ID], unique = true)
-    ],
-    foreignKeys = [
-        ForeignKey(
-            entity = DatabaseHouse::class,
-            parentColumns = [COL_HOUSE_ID],
-            childColumns = [FK_COL_ID_HOUSE],
-            onDelete = ForeignKey.NO_ACTION
-        )
-    ]
-)
-data class DatabaseParcel
-(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = COL_PARCEL_ID)
-    var id: Int? = null,
-
-    @Embedded(prefix = PREFIX_PARCEL)
-    var property: DatabaseProperty? = null,
-
-    @ColumnInfo(name = COL_PARCEL_FRONT)
-    @SerializedName(COL_PARCEL_FRONT)
-    @Expose
-    var front: Float? = null,
-
-    @ColumnInfo(name = COL_PARCEL_SIDE)
-    @SerializedName(COL_PARCEL_SIDE)
-    @Expose
-    var side: Float? = null,
-
-    @ColumnInfo(name = COL_AREA)
-    @SerializedName(COL_AREA)
-    @Expose
-    var area: Float? = null,
-
-    @ColumnInfo(name = COL_DISTRICT)
-    @SerializedName(COL_DISTRICT)
-    @Expose
-    var district: String? = null,
-
-    @ColumnInfo(name = COL_SECTION)
-    @SerializedName(COL_SECTION)
-    @Expose
-    var section: String? = null,
-
-    @ColumnInfo(name = COL_BLOCK)
-    @SerializedName(COL_BLOCK)
-    @Expose
-    var block: String? = null,
-
-    @ColumnInfo(name = COL_PLOT)
-    @SerializedName(COL_PLOT)
-    @Expose
-    var plot: String? = null,
-
-    @ColumnInfo(name = FK_COL_ID_HOUSE)
-    @SerializedName(FK_COL_ID_HOUSE)
-    @Expose
-    val id_house: Int? = null
-) {
-
-    @Ignore
-    constructor
-    (
-        id: Int,
-        address: String,
-        owner: String,
-        priceFinal: Long,
-        priceQuoted: Long,
-        front: Float,
-        side: Float,
-        area: Float,
-        district: String,
-        section: String,
-        block: String,
-        plot: String
-    ) : this() {
-        this.id = id
-        this.property = DatabaseProperty(address, owner, priceFinal, priceQuoted)
-        this.front = front
-        this.side = side
-        this.area = area
-        this.district = district
-        this.section = section
-        this.block = block
-        this.plot = plot
-    }
-}
-
-fun List<DatabaseParcel>.asDomainModel(): List<Parcel> {
-    return map { databaseParcel ->
-        Parcel(
-            id = databaseParcel.id!!,
-            address = databaseParcel.property!!.address!!,
-            owner = databaseParcel.property!!.owner!!,
-            priceFinal = databaseParcel.property!!.priceFinal!!,
-            priceQuoted = databaseParcel.property!!.priceQuoted!!,
-            front = databaseParcel.front,
-            side = databaseParcel.side,
-            area = databaseParcel.area,
-            district = databaseParcel.district,
-            section = databaseParcel.section,
-            block = databaseParcel.block,
-            plot = databaseParcel.plot
-        )
-    }
-}
-
-@Entity
-    (
-    tableName = TABLE_HOUSES,
-    indices =
-    [
-        Index(value = [COL_HOUSE_ID], unique = true)
-    ]
-)
-data class DatabaseHouse
-(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = COL_HOUSE_ID)
-    var id: Int? = null,
-
-    @Embedded(prefix = PREFIX_HOUSE)
-    var property: DatabaseProperty? = null,
-
-    @Ignore
-    private var chambers: List<DatabaseChamber>? = null,
-
-    @Ignore
-    private var parcels: List<DatabaseParcel>? = null
-)
-{
-    @Ignore
-    constructor
-    (
-        id: Int,
-        address: String,
-        owner: String,
-        priceFinal: Long,
-        priceQuoted: Long,
-        chambers: List<DatabaseChamber>,
-        parcels: List<DatabaseParcel>
-    ) : this() {
-        this.id = id
-        this.property = DatabaseProperty(address, owner, priceFinal, priceQuoted)
-        this.chambers = chambers
-        this.parcels = parcels
     }
 }
 
@@ -247,7 +93,18 @@ data class DatabaseHouse
     tableName = TABLE_CHAMBERS,
     indices =
     [
-        Index(value = [COL_CHAMBER_ID], unique = true)
+        Index(value = [COL_CHAMBER_ID], unique = true),
+        Index(value = [COL_PARENT_ID], unique = false)
+    ],
+    foreignKeys =
+    [
+        ForeignKey
+            (
+            entity = DatabaseRealEstate::class,
+            parentColumns = arrayOf(COL_RE_ID),
+            childColumns = arrayOf(COL_PARENT_ID),
+            onDelete = ForeignKey.CASCADE
+        )
     ]
 )
 data class DatabaseChamber
@@ -255,6 +112,9 @@ data class DatabaseChamber
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = COL_CHAMBER_ID)
     var id: Int? = null,
+
+    @ColumnInfo(name = COL_PARENT_ID)
+    var parent_id: Int? = null,
 
     @ColumnInfo(name = COL_CHAMBER_FRONT)
     @SerializedName(COL_CHAMBER_FRONT)
@@ -264,175 +124,195 @@ data class DatabaseChamber
     @ColumnInfo(name = COL_CHAMBER_SIDE)
     @SerializedName(COL_CHAMBER_SIDE)
     @Expose
-    var side: Float? = null
+    var side: Float? = null,
+
+    @ColumnInfo(name = COL_AREA)
+    @SerializedName(COL_AREA)
+    @Expose
+    var area: Float? = null
 )
 
-///**
-// * Class representing a plot of land.
-// *
-// * Houses and buildings may have multiple plots.
-// *
-// * No action on delete: parcels persist whether there is a house on them or not.
-// */
-//@Entity
-//    (
-//    tableName = TABLE_PARCELS,
-//    indices =
-//    [
-//        Index(value = [COL_ID], unique = true)
-//    ],
-//    foreignKeys = [
-//        ForeignKey(
-//            entity = DatabaseHouse::class,
-//            parentColumns = [COL_ID],
-//            childColumns = [FK_COL_ID_HOUSE],
-//            onDelete = ForeignKey.NO_ACTION
+@Entity
+(
+    tableName = TABLE_RE,
+    indices =
+    [
+        Index(value = [COL_RE_ID], unique = true)
+    ],
+    foreignKeys =
+    [
+        ForeignKey
+        (
+            entity = DatabaseRealEstate::class,
+            parentColumns = arrayOf(COL_RE_ID),
+            childColumns = arrayOf(COL_PARENT_ID),
+            onDelete = ForeignKey.NO_ACTION
+        )
+    ]
+)
+data class DatabaseRealEstate
+(
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = COL_RE_ID)
+    var id: Int? = null,
+
+    @ColumnInfo(name = COL_PARENT_ID)
+    var parent_id: Int? = null,
+
+    @Embedded(prefix = RE)
+    var property: DatabaseProperty? = null,
+
+    @ColumnInfo(name = COL_PARCEL_FRONT)        // Plot front
+    @SerializedName(COL_PARCEL_FRONT)
+    @Expose
+    var front: Float? = null,
+
+    @ColumnInfo(name = COL_PARCEL_SIDE)         // Plot side
+    @SerializedName(COL_PARCEL_SIDE)
+    @Expose
+    var side: Float? = null,
+
+    @ColumnInfo(name = COL_AREA)                // Plot area
+    @SerializedName(COL_AREA)
+    @Expose
+    var area: Float? = null,
+
+    @ColumnInfo(name = COL_CATASTER)
+    @SerializedName(COL_CATASTER)
+    @Expose
+    var cataster: String? = null,
+
+    @ColumnInfo(name = COL_ZONIFICATION)
+    @SerializedName(COL_ZONIFICATION)
+    @Expose
+    var zonification: String? = null,
+)
+
+/**
+ * 10/9/2020: Problem here: I need to learn how to handle recursive relations, if at all possible.
+ */
+//fun List<RealEstateWithChildren>.asREWCDomainModel(): List<RealEstate>
+//{
+//    val result = map { obj ->
+////        val stub = if (obj.subunits != null) obj.subunits else null
+//
+////        val stub = obj.subunits ?: ArrayList()
+//
+//        val output = RealEstate(
+//            id = obj.re!!.id!!,
+//            address = obj.re!!.property!!.address!!,
+//            owner = obj.re!!.property!!.owner!!,
+//            priceFinal = obj.re!!.property!!.priceFinal!!,
+//            priceQuoted = obj.re!!.property!!.priceQuoted!!,
+//            parent_id = obj.re!!.parent_id,
+//            front = obj.re!!.front,
+//            side = obj.re!!.side,
+//            area = obj.re!!.area,
+//            cataster = obj.re!!.cataster,
+//            zonification = obj.re!!.zonification
+////            chambers = obj.chambers!!.asChamberDomainModel(),
+////            subunits = obj.subunits!!.asREWCDomainModel()
+////            subunits = stub.asREWCDomainModel()
 //        )
-//    ]
-//)
-//data class DatabaseParcel
-//(
-//    @ColumnInfo(name = COL_D1)
-//    @SerializedName(COL_D1)
-//    @Expose
-//    var d1: Float? = null,
 //
-//    @ColumnInfo(name = COL_D2)
-//    @SerializedName(COL_D2)
-//    @Expose
-//    var d2: Float? = null,
+//        output.chambers = obj.chambers!!.asChamberDomainModel()
 //
-//    @ColumnInfo(name = COL_AREA)
-//    @SerializedName(COL_AREA)
-//    @Expose
-//    var area: Float? = null,
+//        if (obj.subunits != null && obj.subunits!!.isNotEmpty())
+//        {
+//            output.subunits = obj.subunits!!.asREWCDomainModel()
+//        }
+//        else
+//        {
+//            output.subunits = ArrayList()
+//        }
 //
-//    @ColumnInfo(name = COL_DISTRICT)
-//    @SerializedName(COL_DISTRICT)
-//    @Expose
-//    var district: String? = null,
-//
-//    @ColumnInfo(name = COL_SECTION)
-//    @SerializedName(COL_SECTION)
-//    @Expose
-//    var section: String? = null,
-//
-//    @ColumnInfo(name = COL_BLOCK)
-//    @SerializedName(COL_BLOCK)
-//    @Expose
-//    var block: String? = null,
-//
-//    @ColumnInfo(name = COL_PLOT)
-//    @SerializedName(COL_PLOT)
-//    @Expose
-//    var plot: String? = null,
-//
-//    @ColumnInfo(name = FK_COL_ID_HOUSE)
-//    @SerializedName(FK_COL_ID_HOUSE)
-//    @Expose
-//    val id_house: Int? = null
-//) : DatabaseProperty() {
-//
-//    @Ignore
-//    constructor
-//    (
-//        id: Int,
-//        address: String,
-//        owner: String,
-//        priceFinal: Long,
-//        priceQuoted: Long,
-//        d1: Float,
-//        d2: Float,
-//        area: Float,
-//        district: String,
-//        section: String,
-//        block: String,
-//        plot: String
-//    )
-//    : this(d1, d2, area, district, section, block, plot) {
-//        this.id = id
-//        this.address = address
-//        this.owner = owner
-//        this.priceFinal = priceFinal
-//        this.priceQuoted = priceQuoted
+//        output
 //    }
-//}
 //
-//fun List<DatabaseParcel>.asDomainModel(): List<Parcel> {
-//    return map {
-//        Parcel(
-//            id = databaseParcel.id,
-//            address = databaseParcel.address,
-//            owner = databaseParcel.owner,
-//            priceFinal = databaseParcel.priceFinal,
-//            priceQuoted = databaseParcel.priceQuoted,
-//            d1 = databaseParcel.d1,
-//            d2 = databaseParcel.d2,
-//            area = databaseParcel.area,
-//            district = databaseParcel.district,
-//            section = databaseParcel.section,
-//            block = databaseParcel.block,
-//            plot = databaseParcel.plot
-//        )
-//    }
+//    return result
 //}
 
-//@Entity
-//    (
-//    tableName = TABLE_HOUSES,
-//    indices =
-//    [
-//        Index(value = [COL_ID], unique = true)
-//    ]
-//)
-//data class DatabaseHouse
-//(
-//    @Ignore
-//    private val chambers: List<DatabaseChamber>,
-//
-//    @Ignore
-//    private val parcels: List<DatabaseParcel>
-//) : DatabaseProperty()
-//{
-//
-//    /**
-//     * Constructor initializing empty array for chambers
-//     */
-////    @Ignore
-//    constructor
-//    (
-//        id: Int,
-//        address: String,
-//        owner: String,
-//        priceFinal: Long,
-//        priceQuoted: Long,
-//    ) : this(ArrayList(), ArrayList()) {
-//        this.id = id
-//        this.address = address
-//        this.owner = owner
-//        this.priceFinal = priceFinal
-//        this.priceQuoted = priceQuoted
-//    }
-//
-//    /**
-//     * Constructor passing lists of chambers and parcels already populated
-//     */
-//    @Ignore
-//    constructor
-//    (
-//        id: Int,
-//        address: String,
-//        owner: String,
-//        priceFinal: Long,
-//        priceQuoted: Long,
-//        chambers: List<DatabaseChamber>,
-//        parcels: List<DatabaseParcel>
-//    ) : this(chambers, parcels) {
-//        this.id = id
-//        this.address = address
-//        this.owner = owner
-//        this.priceFinal = priceFinal
-//        this.priceQuoted = priceQuoted
-//    }
-//}
+/**
+ * 10/9/2020: There was a problem here with the compiler complaining about being unable to find
+ * 'chamber_id'. The solution was simple enough - the second relation should reference A BLOODY DAMN
+ * DIFFERENT CLASS.
+ */
+data class RealEstateWithSubunits
+(
+    @Embedded
+    val re: DatabaseRealEstate? = null,
+
+    @Relation
+    (
+        parentColumn = COL_RE_ID,
+        entityColumn = COL_PARENT_ID,
+        entity = DatabaseRealEstate::class
+    )
+    var subunits: List<DatabaseRealEstate>? = null,
+
+    @Relation
+    (
+        parentColumn = COL_RE_ID,
+        entityColumn = COL_PARENT_ID,
+        entity = DatabaseChamber::class
+    )
+    var chambers: List<DatabaseChamber>? = null
+)
+
+fun List<RealEstateWithSubunits>.asRESUBDomainModel() : List<RealEstate>
+{
+    return map { obj ->
+        RealEstate(
+            id = obj.re!!.id!!,
+            type = obj.re.property!!.type!!,
+            address = obj.re.property!!.address!!,
+            owner = obj.re.property!!.owner!!,
+            priceFinal = obj.re.property!!.priceFinal!!,
+            priceQuoted = obj.re.property!!.priceQuoted!!,
+            parent_id = obj.re.parent_id,
+            front = obj.re.front,
+            side = obj.re.side,
+            area = obj.re.area,
+            cataster = obj.re.cataster,
+            zonification = obj.re.zonification,
+            chambers = obj.chambers!!.asChamberDomainModel(),
+            subunits = obj.subunits!!.asREDomainModel()
+        )
+    }
+}
+
+fun List<DatabaseChamber>.asChamberDomainModel(): List<Chamber>
+{
+    return map {
+        Chamber(
+            id = it.id,
+            parent_id = it.parent_id,
+            front = it.front,
+            side = it.side,
+            area = it.area
+        )
+    }
+}
+
+fun List<DatabaseRealEstate>.asREDomainModel(): List<RealEstate>
+{
+    return map { obj ->
+        RealEstate(
+            id = obj.id!!,
+            type = obj.property!!.type!!,
+            address = obj.property!!.address!!,
+            owner = obj.property!!.owner!!,
+            priceFinal = obj.property!!.priceFinal!!,
+            priceQuoted = obj.property!!.priceQuoted!!,
+            parent_id = obj.parent_id,
+            front = obj.front,
+            side = obj.side,
+            area = obj.area,
+            cataster = obj.cataster,
+            zonification = obj.zonification,
+            chambers = ArrayList(),
+            subunits = ArrayList()
+        )
+    }
+}
 

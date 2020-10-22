@@ -2,16 +2,34 @@ package com.callisto.tasador
 
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.callisto.tasador.domain.Parcel
+import com.callisto.tasador.domain.RealEstate
 
-@BindingAdapter("dimensionOne")
-fun TextView.setDimensionOne(item: Parcel)
+@BindingAdapter("parcelFront")
+fun TextView.setFront(item: RealEstate)
 {
     text = item.front.toString()
 }
 
-@BindingAdapter("dimensionTwo")
-fun TextView.setDimensionTwo(item: Parcel)
+@BindingAdapter("parcelSide")
+fun TextView.setSide(item: RealEstate)
 {
-    text = item.front.toString()
+    text = item.side.toString()
+}
+
+@BindingAdapter("estateAddress")
+fun TextView.setEstateAddress(item: RealEstate)
+{
+    text = item.address
+}
+
+@BindingAdapter("estateFinalPrice")
+fun TextView.setEstateFinalPrice(item: RealEstate)
+{
+    text = item.priceFinal.toString()
+}
+
+@BindingAdapter("estateId")
+fun TextView.setEstateId(item: RealEstate)
+{
+    text = item.id.toString()
 }
