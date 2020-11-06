@@ -4,14 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.callisto.tasador.R
-import com.callisto.tasador.adapters.OnRealEstateClickListener
+import com.callisto.tasador.TYPE_HOUSE
+import com.callisto.tasador.TYPE_PARCEL
+import com.callisto.tasador.adapters.OnEstateClickedListener
 import com.callisto.tasador.adapters.RealEstateAdapter
+import com.callisto.tasador.adapters.SpinnerArrayAdapter
 import com.callisto.tasador.databinding.FragmentPropertyListBinding
 import com.callisto.tasador.domain.BaseProperty
 import com.callisto.tasador.domain.RealEstate
@@ -19,11 +26,13 @@ import com.callisto.tasador.viewmodels.PropertyListViewModel
 
 class PropertyListFragment : Fragment()
 {
+    private lateinit var estateSpinnerAdapter: ArrayAdapter<String>
+
     /**
      * To lazily initialize this, it must not be referenced before onActivityCreated.
      */
     private val viewModel: PropertyListViewModel by lazy {
-        //
+    //
         val activity = requireNotNull(this.activity)
         {
             "You can only access the ViewModel after onActivityCreated"
@@ -47,7 +56,8 @@ class PropertyListFragment : Fragment()
      *
      * @return Return the View for the fragment's UI.
      */
-    override fun onCreateView(
+    override fun onCreateView
+    (
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -72,7 +82,7 @@ class PropertyListFragment : Fragment()
 
         binding.viewModel = viewModel
 
-        val estateAdapter = RealEstateAdapter(OnRealEstateClickListener {
+        val estateAdapter = RealEstateAdapter(OnEstateClickedListener {
             realEstateId -> viewModel.onItemClicked(realEstateId)
         })
 
@@ -85,9 +95,14 @@ class PropertyListFragment : Fragment()
         viewModel.isSelectingType.observe(viewLifecycleOwner, {
             if (it)
             {
-                // TODO Code picker in alert dialog
+                estateSpinnerAdapter = SpinnerArrayAdapter(
+                    this.requireContext(),
+                    arrayListOf(TYPE_HOUSE, TYPE_PARCEL)
+                )
 
-                viewModel.setIsSelectingType(false)
+                showEstateTypeSelectionDialog()
+
+//                viewModel.setIsSelectingType(false)
             }
         })
 
@@ -107,29 +122,51 @@ class PropertyListFragment : Fragment()
         binding.rvProperties.adapter = estateAdapter
     }
 
-    private fun setUpNavigation() {
-        viewModel.navigateToNewProperty.observe(viewLifecycleOwner, {
+    private fun setUpNavigation()
+    {
+        viewModel.navigateToNewEstate.observe(viewLifecycleOwner, {
             it?.let {
                 val navController = this.findNavController()
 
-                if (navController.currentDestination?.id == R.id.propertyList) {
-                    navController.navigate(PropertyListFragmentDirections.actionPropertyListToHouseEditionFragment())
-                }
+                if (navController.currentDestination?.id == R.id.propertyList)
+                {
+                    if (it == TYPE_HOUSE)
+                    {
+                        navController.navigate(PropertyListFragmentDirections.actionPropertyListToHouseEditionFragment())
 
-                viewModel.onNavigatedToNewProperty()
+                        viewModel.onNavigatedToNewEstate()
+                    }
+
+                    if (it == TYPE_PARCEL)
+                    {
+                        navController.navigate(PropertyListFragmentDirections.actionPropertyListToParcelCreationFragment())
+
+                        viewModel.onNavigatedToNewEstate()
+                    }
+                }
             }
         })
 
-        viewModel.navigateToPropertyDetails.observe(viewLifecycleOwner, {
+        // DONE Fix editing navigation so that it can send this to the right property edition screen
+        viewModel.navigateToEstateDetails.observe(viewLifecycleOwner, {
             it.let {
                 val navController = this.findNavController()
 
-                if (navController.currentDestination?.id == R.id.propertyList) {
-                    navController.navigate(
-                        PropertyListFragmentDirections.actionPropertyListToHouseEditionFragment(
-                            it
-                        )
-                    )
+                if (navController.currentDestination?.id == R.id.propertyList)
+                {
+                    if (it.type == TYPE_HOUSE)
+                    {
+                        navController.navigate(PropertyListFragmentDirections.actionPropertyListToHouseEditionFragment(it.id))
+
+                        viewModel.onNavigatedToEstateDetails()
+                    }
+
+                    if (it.type == TYPE_PARCEL)
+                    {
+                        navController.navigate(PropertyListFragmentDirections.actionPropertyListToParcelCreationFragment(it.id))
+
+                        viewModel.onNavigatedToEstateDetails()
+                    }
                 }
             }
         })
@@ -149,6 +186,55 @@ class PropertyListFragment : Fragment()
      */
     private fun filterSourceData(it: List<RealEstate>) =
         it.filter { realEstate -> !realEstate.hasParent() }
+
+    // https://inducesmile.com/kotlin-source-code/how-to-display-a-spinner-in-alert-dialog-in-kotlin/"
+    private fun showEstateTypeSelectionDialog()
+    {
+        val spinner = Spinner(requireContext())
+
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+
+        spinner.adapter = estateSpinnerAdapter
+
+        alertDialogBuilder.setTitle(getText(R.string.msg_prop_type))
+        alertDialogBuilder.setMessage(getText(R.string.msg_prop_type_hint))
+
+        alertDialogBuilder.setView(spinner)
+
+        val alertDialog = alertDialogBuilder.create()
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener
+        {
+            override fun onNothingSelected(parent: AdapterView<*>?) { }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            )
+            {
+                // FIXED Find out how to stop this from firing when the adapter is set
+                // Source: https://stackoverflow.com/a/37561529
+                val estateType: String? = estateSpinnerAdapter.getItem(position)
+
+                if (position != 0)
+                {
+                    viewModel.onEstateTypePicked(estateType)
+
+                    alertDialog.dismiss()
+                }
+            }
+        }
+
+        alertDialog.show()
+
+        // TODO Decide whether this goes here or inside the ViewModel class proper
+        viewModel.setIsSelectingType(false)
+
+        spinner.setSelection(0, false)
+    }
+
 }
 
 /** Click listener for Properties. Naming the block helps understanding what it actually does.

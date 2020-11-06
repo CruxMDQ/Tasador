@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="activeParcel"
             type="com.callisto.tasador.domain.RealEstate" />
@@ -11,57 +13,472 @@
             name="viewModel"
             type="com.callisto.tasador.viewmodels.PlotEditionViewModel" />
     </data>
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/txtFront"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Front"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/editFront"
-            app:layout_constraintBottom_toTopOf="@id/txtSide" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-        <EditText
-            android:id="@+id/editFront"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{viewModel.activeParcel.front.toString(), default=0}"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/txtFront"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/txtSide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Side"
-            app:layout_constraintBottom_toBottomOf="@+id/editSide"
-            app:layout_constraintEnd_toStartOf="@id/editSide"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtFront" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/panelContentDimensions"
+                    style="@style/contentPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/editSide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{viewModel.activeParcel.side.toString(), default=0}"
-            app:layout_constraintTop_toBottomOf="@id/editFront"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/txtSide"
-            />
+                    <CheckBox
+                        android:id="@+id/chkRegular"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Regular"
+                        app:layout_constraintStart_toStartOf="@id/guidelineParcelDimensionsRadioButtons"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/txtFront"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_parcel_front"
+                        app:layout_constraintBottom_toBottomOf="@id/editFront"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineParcelDimensionsLabelsLeft"
+                        app:layout_constraintTop_toTopOf="@id/editFront" />
+
+                    <EditText
+                        android:id="@+id/editFront"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:text="@{viewModel.activeParcel.front.toString(), default=0}"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineParcelDimensionsInputLeft"
+                        app:layout_constraintTop_toBottomOf="@id/chkRegular" />
+
+                    <TextView
+                        android:id="@+id/txtSide"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_parcel_side"
+                        app:layout_constraintBottom_toBottomOf="@+id/editSide"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineParcelDimensionsLabelsRight"
+                        app:layout_constraintTop_toBottomOf="@id/chkRegular" />
+
+                    <EditText
+                        android:id="@+id/editSide"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:text="@{viewModel.activeParcel.side.toString(), default=0}"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineParcelDimensionsInputRight"
+                        app:layout_constraintTop_toBottomOf="@id/chkRegular" />
+
+                    <TextView
+                        android:id="@+id/txtArea"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_parcel_area"
+                        app:layout_constraintBottom_toBottomOf="@id/editArea"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineParcelDimensionsLabelsLeft"
+                        app:layout_constraintTop_toTopOf="@id/editArea" />
+
+                    <EditText
+                        android:id="@+id/editArea"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:text="@{viewModel.activeParcel.area.toString(), default=0}"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineParcelDimensionsInputLeft"
+                        app:layout_constraintTop_toBottomOf="@id/editFront" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineParcelDimensionsRadioButtons"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="4dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineParcelDimensionsLabelsLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="24dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineParcelDimensionsInputLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="104dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineParcelDimensionsLabelsRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="209dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineParcelDimensionsInputRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="309dp" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/panelContentLegal"
+                    style="@style/contentPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineContentLegalLabelsLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="4dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineContentLegalInputLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="104dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineContentLegalLabelsRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="209dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineContentLegalInputRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="309dp" />
+
+                    <TextView
+                        android:id="@+id/txtTaxId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_tax_number"
+                        app:layout_constraintBottom_toBottomOf="@id/editTaxId"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineContentLegalLabelsLeft"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <EditText
+                        android:id="@+id/editTaxId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewModel.activeParcel.tax_number.toString()}"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineContentLegalInputLeft"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/txtCataster"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_parcel_cataster"
+                        app:layout_constraintBottom_toBottomOf="@id/editCataster"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineContentLegalLabelsLeft"
+                        app:layout_constraintTop_toBottomOf="@id/editTaxId" />
+
+                    <EditText
+                        android:id="@+id/editCataster"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewModel.activeParcel.cataster.toString()}"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineContentLegalInputLeft"
+                        app:layout_constraintTop_toBottomOf="@+id/editTaxId" />
+
+                    <TextView
+                        android:id="@+id/txtZonification"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_parcel_zonification"
+                        app:layout_constraintBottom_toBottomOf="@id/editZonification"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineContentLegalLabelsLeft"
+                        app:layout_constraintTop_toBottomOf="@id/editCataster" />
+
+                    <EditText
+                        android:id="@+id/editZonification"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewModel.activeParcel.zonification.toString()}"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineContentLegalInputLeft"
+                        app:layout_constraintTop_toBottomOf="@+id/editCataster" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/panelContentUtilities"
+                    style="@style/contentPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <CheckBox
+                        android:id="@+id/chkUtilityPower"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="@{Boolean.valueOf(viewModel.activeParcel.utility_power)}"
+                        android:text="@string/label_utility_power"
+                        app:layout_constraintStart_toStartOf="@id/guidelinePlotCreationLabelsLeft"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <CheckBox
+                        android:id="@+id/chkUtilityWater"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="@{Boolean.valueOf(viewModel.activeParcel.utility_water)}"
+                        android:text="@string/label_utility_water"
+                        app:layout_constraintStart_toStartOf="@id/guidelinePlotCreationLabelsLeft"
+                        app:layout_constraintTop_toBottomOf="@id/chkUtilityPower" />
+
+                    <CheckBox
+                        android:id="@+id/chkUtilityDrains"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="@{Boolean.valueOf(viewModel.activeParcel.utility_drains)}"
+                        android:text="@string/label_utility_drains"
+                        app:layout_constraintStart_toStartOf="@id/guidelinePlotCreationLabelsLeft"
+                        app:layout_constraintTop_toBottomOf="@id/chkUtilityWater" />
+
+                    <CheckBox
+                        android:id="@+id/chkUtilityNatgas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="@{Boolean.valueOf(viewModel.activeParcel.utility_natgas)}"
+                        android:text="@string/label_utility_natural_gas"
+                        app:layout_constraintStart_toStartOf="@id/guidelinePlotCreationLabelsRight"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <CheckBox
+                        android:id="@+id/chkUtilitySewers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="@{Boolean.valueOf(viewModel.activeParcel.utility_sewers)}"
+                        android:text="@string/label_utility_sewers"
+                        app:layout_constraintStart_toStartOf="@id/guidelinePlotCreationLabelsRight"
+                        app:layout_constraintTop_toBottomOf="@id/chkUtilityNatgas" />
+
+                    <CheckBox
+                        android:id="@+id/chkUtilityInternet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="@{Boolean.valueOf(viewModel.activeParcel.utility_internet)}"
+                        android:text="@string/label_utility_internet"
+                        app:layout_constraintStart_toStartOf="@id/guidelinePlotCreationLabelsRight"
+                        app:layout_constraintTop_toBottomOf="@id/chkUtilitySewers" />
+
+                    <TextView
+                        android:id="@+id/txtRoadType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_road_type"
+                        app:layout_constraintBottom_toBottomOf="@id/editRoadType"
+                        app:layout_constraintStart_toStartOf="@id/guidelinePlotCreationLabelsLeft"
+                        app:layout_constraintTop_toTopOf="@id/editRoadType" />
+
+                    <EditText
+                        android:id="@+id/editRoadType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:text="@{viewModel.activeParcel.road_type.toString()}"
+                        app:layout_constraintStart_toStartOf="@id/guidelinePlotCreationInputLeft"
+                        app:layout_constraintTop_toBottomOf="@id/chkUtilityInternet" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelinePlotCreationLabelsLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="4dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelinePlotCreationInputLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="104dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelinePlotCreationLabelsRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="209dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelinePlotCreationInputRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="309dp" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/panelContentOwnerData"
+                    style="@style/contentPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineOwnerDataLabelsLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="4dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineOwnerDataInputLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="104dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineOwnerDataLabelsRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="209dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineOwnerDataInputRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="309dp" />
+
+                    <TextView
+                        android:id="@+id/lblOwnerName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_owner_name"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/guidelineOwnerDataLabelsLeft"/>
+
+                    <TextView
+                        android:id="@+id/txtOwnerName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewModel.activeParcel.owner.toString()}"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/guidelineOwnerDataInputLeft"
+                        tools:text="Some inane idiot"/>
+
+                    <TextView
+                        android:id="@+id/lblOwnerPhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/label_owner_phone"
+                        android:paddingTop="@dimen/spacing_half"
+                        app:layout_constraintTop_toBottomOf="@id/lblOwnerName"
+                        app:layout_constraintStart_toStartOf="@id/guidelineOwnerDataLabelsLeft"/>
+
+                    <TextView
+                        android:id="@+id/txtOwnerPhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/spacing_half"
+                        app:layout_constraintTop_toBottomOf="@id/txtOwnerName"
+                        app:layout_constraintStart_toStartOf="@id/guidelineOwnerDataInputLeft"
+                        tools:text="555-5555"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/panelContentPrice"
+                    style="@style/contentPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineContentPriceLabelsLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="4dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineContentPriceInputLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="104dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineContentPriceLabelsRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="209dp" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineContentPriceInputRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="309dp" />
+
+                    <TextView
+                        android:id="@+id/txtPriceQuoted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_price_quoted"
+                        app:layout_constraintBottom_toBottomOf="@id/editPriceQuoted"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineContentPriceLabelsLeft"
+                        app:layout_constraintTop_toTopOf="@id/editPriceQuoted" />
+
+                    <EditText
+                        android:id="@+id/editPriceQuoted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:text="@{String.valueOf(viewModel.activeParcel.priceQuoted), default=0}"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineContentPriceInputLeft"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/txtPriceFinal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_price_final"
+                        app:layout_constraintBottom_toBottomOf="@id/editPriceFinal"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineContentPriceLabelsRight"
+                        app:layout_constraintTop_toTopOf="@id/editPriceFinal" />
+
+                    <EditText
+                        android:id="@+id/editPriceFinal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:text="@{String.valueOf(viewModel.activeParcel.priceFinal), default=0}"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineContentPriceInputRight"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+        </ScrollView>
 
         <Button
             android:id="@+id/btnAdd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="@{() -> viewModel.launchAddParcel(editFront.getText().toString(), editSide.getText().toString())}"
-            android:text="Add"
-            app:layout_constraintTop_toBottomOf="@id/txtSide"
+            android:onClick="@{() -> viewModel.saveData()}"
+            android:text="@string/label_btn_add"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@id/editRoadType" />
+    </LinearLayout>
 </layout>

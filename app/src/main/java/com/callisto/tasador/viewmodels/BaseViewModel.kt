@@ -7,11 +7,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 
-const val UNINITIALIZED_ID = -1
-
-const val TYPE_HOUSE = "House"
-const val TYPE_PARCEL = "Parcel"
-
 @Suppress("JoinDeclarationAndAssignment")
 abstract class BaseViewModel : AndroidViewModel
 {

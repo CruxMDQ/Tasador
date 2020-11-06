@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">Tasador</string>
+    <string name="label_id">ID#</string>
+    <string name="label_address">Address</string>
+    <string name="label_price_quoted">Quoted price</string>
+    <string name="label_price_final">Final price</string>
+    <string name="label_parcel_front">Front</string>
+    <string name="label_parcel_side">Side</string>
+    <string name="label_parcel_cataster">Cataster</string>
+    <string name="label_parcel_zonification">Zonification</string>
+    <string name="label_parcel_area">Area</string>
+    <string name="label_owner_name">Owner name</string>
+    <string name="label_owner_phone">Owner phone</string>
+
+    <string name="msg_prop_type">Pick a property type</string>
+    <string name="msg_prop_type_hint">"Select an estate type from the options available."</string>
+    <string name="msg_export_data">Export data</string>
+    <string name="msg_export_data_hint">Do you want to export the data to PDF and email it?</string>
+    <string name="label_btn_add">Add</string>
+    <string name="label_road_type">Road type</string>
+    <string name="label_utility_power">Power</string>
+    <string name="label_utility_water">Water</string>
+    <string name="label_utility_drains">Pluvial drains</string>
+    <string name="label_utility_natural_gas">Natural gas</string>
+    <string name="label_utility_sewers">Sewers</string>
+    <string name="label_utility_internet">Internet</string>
+    <string name="label_tax_number">Tax ID</string>
+    <string name="btn_yes">Yes</string>
+    <string name="btn_no">No</string>
 </resources>

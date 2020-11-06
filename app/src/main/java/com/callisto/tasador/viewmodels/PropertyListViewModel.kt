@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.callisto.tasador.database.getDatabase
+import com.callisto.tasador.domain.RealEstate
 import com.callisto.tasador.repository.Repository
 import java.lang.IllegalArgumentException
 
@@ -22,36 +23,35 @@ class PropertyListViewModel : BaseViewModel
     /**
      * Navigation-related flag and functions for creating a new property.
      */
-    private val _navigateToNewProperty = MutableLiveData<Boolean>()
-    val navigateToNewProperty: LiveData<Boolean>
-        get() = _navigateToNewProperty
+    private val _navigateToNewEstate = MutableLiveData<String>()
+    val navigateToNewEstate: LiveData<String>
+        get() = _navigateToNewEstate
 
     fun onFabClicked()
     {
         setIsSelectingType(true)
-        _navigateToNewProperty.value = true
     }
 
-    fun onNavigatedToNewProperty()
+    fun onNavigatedToNewEstate()
     {
-        _navigateToNewProperty.value = null
+        _navigateToNewEstate.value = null
     }
 
     /**
      * Navigation-related flag and functions for editing a property's details.
      */
-    private val _navigateToPropertyDetails = MutableLiveData<Int>()
-    val navigateToPropertyDetails: LiveData<Int>
-        get() = _navigateToPropertyDetails
+    private val _navigateToEstateDetails = MutableLiveData<RealEstate>()
+    val navigateToEstateDetails: LiveData<RealEstate>
+        get() = _navigateToEstateDetails
 
-    fun onNavigatedToPropertyDetails()
+    fun onNavigatedToEstateDetails()
     {
-        _navigateToPropertyDetails.value = null
+        _navigateToEstateDetails.value = null
     }
 
-    fun onItemClicked(id: Int)
+    fun onItemClicked(realEstate: RealEstate)
     {
-        _navigateToPropertyDetails.value = id
+        _navigateToEstateDetails.value = realEstate
     }
 
     private var _isSelectingType = MutableLiveData<Boolean>()
@@ -61,6 +61,11 @@ class PropertyListViewModel : BaseViewModel
     fun setIsSelectingType(isSelecting: Boolean)
     {
         _isSelectingType.value = isSelecting
+    }
+
+    fun onEstateTypePicked(estateType: String?)
+    {
+        _navigateToNewEstate.value = estateType
     }
 
     /**

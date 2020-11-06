@@ -4,9 +4,9 @@ package com.callisto.tasador.domain
  * Domain objects are plain Kotlin data classes that represent the things in our app. These are the
  * objects that should be displayed on screen, or manipulated by the app.
  *
- * @see database for objects that are mapped to the database
+ * @see DatabaseEntities.kt for objects that are mapped to the database
  *
- * IMPORTANT BIT: DATA CLASS SHOULD ***NOT*** BE EXTENDED!
+ * IMPORTANT BIT: DATA CLASSES SHOULD ***NOT*** BE EXTENDED!
  * https://stackoverflow.com/a/26467380/742145
  */
 
@@ -31,6 +31,14 @@ data class Chamber(
     var area: Float?
 )
 
+/**
+ * Master class representing any one piece of real estate, regardless of type.
+ *
+ * Can and will have many null values depending on type (e.g., a flat will have no use for
+ * cataster and zonification values. Or would it?)
+ *
+ * @see com.callisto.tasador.database.DatabaseRealEstate for matching database class.
+ */
 data class RealEstate(
     override var id: Int = -1,
     override var type: String = "",
@@ -44,6 +52,14 @@ data class RealEstate(
     var area: Float?,
     var cataster: String?,
     var zonification: String?,
+    var tax_number: String?,
+    var utility_power: String?,
+    var utility_water: String?,
+    var utility_drains: String?,
+    var utility_natgas: String?,
+    var utility_sewers: String?,
+    var utility_internet: String?,
+    var road_type: String?,
     var subunits: List<RealEstate>? = null,
     var chambers: List<Chamber>? = null
 ) : BaseProperty

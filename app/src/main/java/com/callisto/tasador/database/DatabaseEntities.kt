@@ -1,39 +1,11 @@
 package com.callisto.tasador.database
 
 import androidx.room.*
+import com.callisto.tasador.*
 import com.callisto.tasador.domain.Chamber
-import com.callisto.tasador.domain.Plot
 import com.callisto.tasador.domain.RealEstate
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-
-const val TABLE_RE = "RealEstate"
-const val TABLE_CHAMBERS = "chambers"
-
-const val PARCEL = "parcel"
-const val HOUSE = "house"
-const val RE = "re"
-
-const val SUFFIX_ID = "id"
-const val COL_CHAMBER_ID = "chamber_id"
-
-const val COL_RE_ID = RE + "_" + SUFFIX_ID
-const val COL_PARENT_ID = "parent_id"
-
-const val COL_TYPE = "type"
-const val COL_ADDRESS = "address"
-const val COL_OWNER = "owner"
-const val COL_PRICE_FINAL = "price_final"
-const val COL_PRICE_QUOTED = "price_quoted"
-
-const val COL_CHAMBER_FRONT = "front"
-const val COL_CHAMBER_SIDE = "side"
-const val COL_PARCEL_FRONT = "front"
-const val COL_PARCEL_SIDE = "side"
-const val COL_AREA = "area"
-
-const val COL_CATASTER = "cataster"
-const val COL_ZONIFICATION = "zonification"
 
 /**
  * Master entity class. All property types must extend this.
@@ -99,7 +71,7 @@ open class DatabaseProperty
     foreignKeys =
     [
         ForeignKey
-            (
+        (
             entity = DatabaseRealEstate::class,
             parentColumns = arrayOf(COL_RE_ID),
             childColumns = arrayOf(COL_PARENT_ID),
@@ -108,7 +80,7 @@ open class DatabaseProperty
     ]
 )
 data class DatabaseChamber
-    (
+(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = COL_CHAMBER_ID)
     var id: Int? = null,
@@ -186,51 +158,47 @@ data class DatabaseRealEstate
     @SerializedName(COL_ZONIFICATION)
     @Expose
     var zonification: String? = null,
-)
 
-/**
- * 10/9/2020: Problem here: I need to learn how to handle recursive relations, if at all possible.
- */
-//fun List<RealEstateWithChildren>.asREWCDomainModel(): List<RealEstate>
-//{
-//    val result = map { obj ->
-////        val stub = if (obj.subunits != null) obj.subunits else null
-//
-////        val stub = obj.subunits ?: ArrayList()
-//
-//        val output = RealEstate(
-//            id = obj.re!!.id!!,
-//            address = obj.re!!.property!!.address!!,
-//            owner = obj.re!!.property!!.owner!!,
-//            priceFinal = obj.re!!.property!!.priceFinal!!,
-//            priceQuoted = obj.re!!.property!!.priceQuoted!!,
-//            parent_id = obj.re!!.parent_id,
-//            front = obj.re!!.front,
-//            side = obj.re!!.side,
-//            area = obj.re!!.area,
-//            cataster = obj.re!!.cataster,
-//            zonification = obj.re!!.zonification
-////            chambers = obj.chambers!!.asChamberDomainModel(),
-////            subunits = obj.subunits!!.asREWCDomainModel()
-////            subunits = stub.asREWCDomainModel()
-//        )
-//
-//        output.chambers = obj.chambers!!.asChamberDomainModel()
-//
-//        if (obj.subunits != null && obj.subunits!!.isNotEmpty())
-//        {
-//            output.subunits = obj.subunits!!.asREWCDomainModel()
-//        }
-//        else
-//        {
-//            output.subunits = ArrayList()
-//        }
-//
-//        output
-//    }
-//
-//    return result
-//}
+    @ColumnInfo(name = COL_TAX_NUMBER)
+    @SerializedName(COL_TAX_NUMBER)
+    @Expose
+    var tax_number: String? = null,
+
+    @ColumnInfo(name = COL_UTILITY_WATER)
+    @SerializedName(COL_UTILITY_WATER)
+    @Expose
+    var utility_water: String? = null,
+
+    @ColumnInfo(name = COL_UTILITY_POWER)
+    @SerializedName(COL_UTILITY_POWER)
+    @Expose
+    var utility_power: String? = null,
+
+    @ColumnInfo(name = COL_UTILITY_SEWERS)
+    @SerializedName(COL_UTILITY_SEWERS)
+    @Expose
+    var utility_sewers: String? = null,
+
+    @ColumnInfo(name = COL_UTILITY_NATGAS)
+    @SerializedName(COL_UTILITY_NATGAS)
+    @Expose
+    var utility_natgas: String? = null,
+
+    @ColumnInfo(name = COL_UTILITY_DRAINS)
+    @SerializedName(COL_UTILITY_DRAINS)
+    @Expose
+    var utility_drains: String? = null,
+
+    @ColumnInfo(name = COL_UTILITY_INET)
+    @SerializedName(COL_UTILITY_INET)
+    @Expose
+    var utility_internet: String? = null,
+
+    @ColumnInfo(name = COL_ROAD_TYPE)
+    @SerializedName(COL_ROAD_TYPE)
+    @Expose
+    var road_type: String? = null
+)
 
 /**
  * 10/9/2020: There was a problem here with the compiler complaining about being unable to find
@@ -275,6 +243,14 @@ fun List<RealEstateWithSubunits>.asRESUBDomainModel() : List<RealEstate>
             area = obj.re.area,
             cataster = obj.re.cataster,
             zonification = obj.re.zonification,
+            tax_number = obj.re.tax_number,
+            utility_power = obj.re.utility_power,
+            utility_water = obj.re.utility_water,
+            utility_drains = obj.re.utility_drains,
+            utility_natgas = obj.re.utility_natgas,
+            utility_sewers = obj.re.utility_sewers,
+            utility_internet = obj.re.utility_internet,
+            road_type = obj.re.road_type,
             chambers = obj.chambers!!.asChamberDomainModel(),
             subunits = obj.subunits!!.asREDomainModel()
         )
@@ -310,6 +286,14 @@ fun List<DatabaseRealEstate>.asREDomainModel(): List<RealEstate>
             area = obj.area,
             cataster = obj.cataster,
             zonification = obj.zonification,
+            tax_number = obj.tax_number,
+            utility_power = obj.utility_power,
+            utility_water = obj.utility_water,
+            utility_drains = obj.utility_drains,
+            utility_natgas = obj.utility_natgas,
+            utility_sewers = obj.utility_sewers,
+            utility_internet = obj.utility_internet,
+            road_type = obj.road_type,
             chambers = ArrayList(),
             subunits = ArrayList()
         )

@@ -15,7 +15,7 @@
 
         <variable
             name="clickListener"
-            type="com.callisto.tasador.adapters.OnRealEstateClickListener" />
+            type="com.callisto.tasador.adapters.OnEstateClickedListener" />
     </data>
 
     <!--    <com.google.android.material.card.MaterialCardView-->
@@ -29,35 +29,93 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{() -> clickListener.onClick(parcel)}">
-
-<!--        <androidx.constraintlayout.widget.Guideline-->
-<!--            android:id="@+id/left_well"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical"-->
-<!--            app:layout_constraintGuide_begin="8dp" />-->
-
-<!--        <androidx.constraintlayout.widget.Guideline-->
-<!--            android:id="@+id/right_well"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginEnd="8dp"-->
-<!--            android:orientation="vertical"-->
-<!--            app:layout_constraintGuide_end="8dp" />-->
+        android:layout_margin="8dp"
+        android:background="@drawable/rounded_rectangle"
+        android:onClick="@{() -> clickListener.onClick(parcel)}"
+        android:padding="8dp">
 
         <TextView
-            android:id="@+id/parcelD1"
-            android:layout_width="match_parent"
+            android:id="@+id/lblParcelId"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:text="@string/label_id"
+            app:layout_constraintStart_toStartOf="@id/guidelineParcelLabels"
             app:layout_constraintTop_toTopOf="parent"
-            app:parcelFront="@{parcel}"
-            tools:text="IV" />
-        <!--            android:text="@{parcel.d1.toString()}"-->
+            />
+
+        <TextView
+            android:id="@+id/txtParcelId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:estateId="@{parcel}"
+            app:layout_constraintStart_toEndOf="@id/lblParcelId"
+            app:layout_constraintStart_toStartOf="@id/parcelPrice"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="1"
+            />
+
+        <TextView
+            android:id="@+id/lblArea"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_parcel_area"
+            app:layout_constraintStart_toStartOf="@+id/guidelineParcelLabels"
+            app:layout_constraintTop_toBottomOf="@id/lblParcelId"
+            />
+
+        <TextView
+            android:id="@+id/txtParcelArea"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/lblArea"
+            app:layout_constraintStart_toStartOf="@+id/parcelPrice"
+            app:layout_constraintTop_toBottomOf="@id/txtParcelId"
+            app:parcelArea="@{parcel}"
+            tools:text="450" />
+
+        <TextView
+            android:id="@+id/lblCataster"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_parcel_cataster"
+            app:layout_constraintStart_toStartOf="@+id/guidelineParcelLabels"
+            app:layout_constraintTop_toBottomOf="@id/lblArea"
+            />
+
+        <TextView
+            android:id="@+id/parcelCataster"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/lblCataster"
+            app:layout_constraintStart_toStartOf="@+id/parcelPrice"
+            app:layout_constraintTop_toBottomOf="@id/txtParcelArea"
+            app:parcelCataster="@{parcel}"
+            tools:text="150-32" />
+
+        <TextView
+            android:id="@+id/lblPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_price_final"
+            app:layout_constraintStart_toStartOf="@+id/guidelineParcelLabels"
+            app:layout_constraintTop_toBottomOf="@id/lblCataster" />
+
+        <TextView
+            android:id="@+id/parcelPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/lblPrice"
+            app:layout_constraintTop_toBottomOf="@id/parcelCataster"
+            app:estateFinalPrice="@{parcel}"
+            tools:text="39000" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineParcelLabels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="20dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

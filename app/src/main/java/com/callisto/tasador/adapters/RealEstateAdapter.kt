@@ -1,17 +1,19 @@
 package com.callisto.tasador.adapters
 
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.callisto.tasador.R
+import com.callisto.tasador.TYPE_PARCEL
+import com.callisto.tasador.VIEW_TYPE_HOUSE
+import com.callisto.tasador.VIEW_TYPE_PARCEL
 import com.callisto.tasador.databinding.ItemHouseBinding
 import com.callisto.tasador.databinding.ItemParcelBinding
 import com.callisto.tasador.domain.RealEstate
-import com.callisto.tasador.viewmodels.TYPE_PARCEL
-
-const val VIEW_TYPE_PARCEL = 1
-const val VIEW_TYPE_HOUSE = 2
 
 /** Adapter for RecyclerViews supporting multiple view types.
  * Sources:
@@ -21,7 +23,7 @@ const val VIEW_TYPE_HOUSE = 2
  * 9/17/20: those solutions require using inner classes on the Adapter class for
  * ViewHolders, an approach so far NOT used here.
  */
-class RealEstateAdapter (val clickListener: OnRealEstateClickListener) :
+class RealEstateAdapter (val clickListener: OnEstateClickedListener) :
     ListAdapter<RealEstate, RecyclerView.ViewHolder>(RealEstateDiffCallback())
 {
     override fun getItemViewType(position: Int): Int {
@@ -73,6 +75,10 @@ class HouseViewHolder(val binding: ItemHouseBinding) :
                 false
             )
 
+            val drawable : GradientDrawable = binding.root.background as GradientDrawable
+
+            drawable.setStroke(6, ContextCompat.getColor(parent.context, R.color.dark_red))
+
             return HouseViewHolder(binding)
         }
     }
@@ -80,7 +86,7 @@ class HouseViewHolder(val binding: ItemHouseBinding) :
     fun bind(
     //
         item: RealEstate,
-        clickListener: OnRealEstateClickListener
+        clickListener: OnEstateClickedListener
     ) {
         binding.clickListener = clickListener
         /**
@@ -107,14 +113,18 @@ class ParcelViewHolder(val binding: ItemParcelBinding) :
                 false
             )
 
+            val drawable : GradientDrawable = binding.root.background as GradientDrawable
+
+            drawable.setStroke(6, ContextCompat.getColor(parent.context, R.color.dark_green))
+
             return ParcelViewHolder(binding)
         }
     }
 
     fun bind(
-        //
+    //
         item: RealEstate,
-        clickListener: OnRealEstateClickListener
+        clickListener: OnEstateClickedListener
     ) {
         binding.clickListener = clickListener
         /**
@@ -141,4 +151,9 @@ class RealEstateDiffCallback : DiffUtil.ItemCallback<RealEstate>()
 class OnRealEstateClickListener(val clickListener: (realEstateId: Int) -> Unit)
 {
     fun onClick(re: RealEstate) = clickListener(re.id)
+}
+
+class OnEstateClickedListener(val clickListener: (estate: RealEstate) -> Unit)
+{
+    fun onClick(re: RealEstate) = clickListener(re)
 }

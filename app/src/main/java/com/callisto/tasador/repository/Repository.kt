@@ -3,16 +3,16 @@ package com.callisto.tasador.repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import com.callisto.tasador.TYPE_HOUSE
+import com.callisto.tasador.TYPE_PARCEL
+import com.callisto.tasador.UNINITIALIZED_ID
 import com.callisto.tasador.database.*
 import com.callisto.tasador.domain.RealEstate
-import com.callisto.tasador.viewmodels.TYPE_HOUSE
-import com.callisto.tasador.viewmodels.TYPE_PARCEL
-import com.callisto.tasador.viewmodels.UNINITIALIZED_ID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class Repository {
-    val dao: RealtorDao
+    private val dao: RealtorDao
 
     @Suppress("ConvertSecondaryConstructorToPrimary")
     constructor(database: RealtorDatabase) {
@@ -44,26 +44,44 @@ class Repository {
      * @param parentId ID of the parent of this plot, if it has one. Defaults to -1 if it does not.
      * @param front Front of the parcel.
      * @param side Side of the parcel.
+     * @param cataster
+     * @param zonification
      */
-    suspend fun addParcel(estateId: Int, parentId: Int, front: String, side: String)
+    suspend fun addParcel
+    (
+        estateId: Int,
+        parentId: Int,
+        front: String,
+        side: String,
+        area: String,
+        cataster: String,
+        zonification: String,
+        roadType: String,
+        taxId: String,
+        hasPower: Boolean,
+        hasWater: Boolean,
+        hasDrains: Boolean,
+        hasNatgas: Boolean,
+        hasSewers: Boolean,
+        hasInternet: Boolean,
+        address: String,
+        owner: String,
+        priceFinal: Long,
+        priceQuoted: Long
+    )
     {
         withContext(Dispatchers.IO)
         {
-            var realEstateId = UNINITIALIZED_ID
-
-            if (estateId == UNINITIALIZED_ID)
+            val realEstateId: Int = if (estateId == UNINITIALIZED_ID)
             {
-                realEstateId = dao.getLastRealEstateId()
+                dao.getLastRealEstateId()
             }
             else
             {
-                realEstateId = estateId
+                estateId
             }
 
             val realEstate = DatabaseRealEstate()
-
-            val reFront = front.toFloat()
-            val reSide = side.toFloat()
 
             realEstate.id = realEstateId
 
@@ -72,11 +90,27 @@ class Repository {
                 realEstate.parent_id = parentId
             }
 
-            realEstate.front = reFront
-            realEstate.side = reSide
-            realEstate.area = reFront * reSide
+            realEstate.front = front.toFloat()
+            realEstate.side = side.toFloat()
+            realEstate.area = area.toFloat()
+            realEstate.cataster = cataster
+            realEstate.zonification = zonification
+            realEstate.tax_number = taxId
+            realEstate.road_type = roadType
+            realEstate.utility_power = hasPower.toString()
+            realEstate.utility_water = hasWater.toString()
+            realEstate.utility_drains = hasDrains.toString()
+            realEstate.utility_natgas = hasNatgas.toString()
+            realEstate.utility_sewers = hasSewers.toString()
+            realEstate.utility_internet = hasInternet.toString()
 
-            realEstate.property = DatabaseProperty(TYPE_PARCEL, "", "", 0, 0)
+            realEstate.property = DatabaseProperty(
+                TYPE_PARCEL,
+                address,
+                owner,
+                priceFinal,
+                priceQuoted
+            )
 
             val result = dao.insertRealEstate(realEstate)
 
@@ -92,23 +126,23 @@ class Repository {
         priceQuoted: Long
     ) : Int
     {
+        @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
         var realEstateId = UNINITIALIZED_ID
 
         withContext(Dispatchers.IO)
         {
-            if (estateId == UNINITIALIZED_ID)
+            realEstateId = if (estateId == UNINITIALIZED_ID)
             {
-                realEstateId = dao.getLastRealEstateId()
+                dao.getLastRealEstateId()
             }
             else
             {
-                realEstateId = estateId
+                estateId
             }
 
             val house = DatabaseRealEstate()
 
             house.id = realEstateId
-//            house.parent_id = UNINITIALIZED_ID
 
             house.property = DatabaseProperty(TYPE_HOUSE, address, owner, priceFinal, priceQuoted)
 

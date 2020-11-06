@@ -10,14 +10,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.callisto.tasador.R
-import com.callisto.tasador.adapters.OnRealEstateClickListener
+import com.callisto.tasador.TYPE_PARCEL
+import com.callisto.tasador.UNINITIALIZED_ID
+import com.callisto.tasador.adapters.OnEstateClickedListener
 import com.callisto.tasador.adapters.RealEstateAdapter
 import com.callisto.tasador.database.getDatabase
 import com.callisto.tasador.databinding.FragmentHouseCreationBinding
 import com.callisto.tasador.domain.RealEstate
 import com.callisto.tasador.viewmodels.HouseEditionViewModel
-import com.callisto.tasador.viewmodels.TYPE_PARCEL
-import com.callisto.tasador.viewmodels.UNINITIALIZED_ID
 
 class HouseEditionFragment : Fragment()
 {
@@ -60,7 +60,7 @@ class HouseEditionFragment : Fragment()
 
         binding.viewModel = viewModel
 
-        val plotsAdapter = RealEstateAdapter(OnRealEstateClickListener {
+        val plotsAdapter = RealEstateAdapter(OnEstateClickedListener {
                 parcelId -> viewModel.onItemClicked(parcelId)
         })
 

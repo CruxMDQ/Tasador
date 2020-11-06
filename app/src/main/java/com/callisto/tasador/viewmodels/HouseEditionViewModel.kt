@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.callisto.tasador.UNINITIALIZED_ID
 import com.callisto.tasador.database.RealtorDao
 import com.callisto.tasador.database.getDatabase
 import com.callisto.tasador.domain.RealEstate
@@ -84,8 +85,8 @@ class HouseEditionViewModel : BaseViewModel
     val navigateToPlotDetails: LiveData<Int>
         get() = _navigateToPlotDetails
 
-    fun onItemClicked(plotId: Int)
+    fun onItemClicked(realEstate: RealEstate)
     {
-        _navigateToPlotDetails.value = plotId
+        _navigateToPlotDetails.value = realEstate.id
     }
 }
